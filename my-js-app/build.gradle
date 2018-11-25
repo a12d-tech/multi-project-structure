@@ -1,0 +1,43 @@
+plugins {
+    id "com.moowork.node" version "1.2.0"
+}
+
+node {
+    version = '8.9.3'
+    npmVersion = '6.4.1'
+    download = true
+    workDir = file("${projectDir}/node")
+    nodeModulesDir = file("${projectDir}")
+}
+
+task clean(type: Delete) {
+    group 'clean client'
+    delete "${projectDir}/dist"
+}
+
+task cleanNpm(type: Delete) {
+    group 'build client'
+    dependsOn 'clean'
+    delete "${projectDir}/node", "${projectDir}/node_modules"
+}
+
+task npmUpdate {
+    group 'build client'
+    dependsOn 'npm_update'
+}
+
+task build(type: NpmTask, dependsOn: npmInstall) {
+    group 'build client'
+    description = 'Build client'
+    args = ['run', 'build']
+}
+
+task serve(type: NpmTask, dependsOn: npmInstall) {
+    group 'serve client'
+    description = 'Compile, serve and watch client'
+    args = ['run', 'start']
+}
+
+task rebuildNodeSass(type: NpmTask, dependsOn: npmInstall) {
+    args = ['rebuild', 'node-sass']
+}
